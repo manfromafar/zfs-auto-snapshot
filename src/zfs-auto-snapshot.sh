@@ -396,7 +396,7 @@ ZPOOL_STATUS=$(env LC_ALL=C zpool status 2>&1 ) \
   || { print_log error "zpool status $?: $ZPOOL_STATUS"; exit 135; }
 
 
-ZFS_LIST=$(env LC_ALL=C zfs list -H -t filesystem,volume -s name \
+ZFS_LIST=$(env LC_ALL=C zfs list -H -t filesystem,volume -s name -r $ii \
   -o name,com.sun:auto-snapshot,com.sun:auto-snapshot:"$opt_label") \
   || { print_log error "zfs list $?: $ZFS_LIST"; exit 136; }
 
@@ -406,14 +406,14 @@ then
 	# snapshot removal to only snapshots with the same label format
 	if [ -n "$opt_label" ]
 	then
-		SNAPSHOTS_OLD=$(env LC_ALL=C zfs list -H -t snapshot -o name -s name | \
+		SNAPSHOTS_OLD=$(env LC_ALL=C zfs list -H -t snapshot -o name -s name -r $ii | \
 			grep "$opt_prefix"_"$opt_label" | \
 			awk '{ print substr( $0, length($0) - 14, length($0) ) " " $0}' | \
 			sort -r -k1,1 -k2,2 | \
 			awk '{ print substr( $0, 17, length($0) )}') \
 	  	|| { print_log error "zfs list $?: $SNAPSHOTS_OLD"; exit 137; }
 	else
- 		SNAPSHOTS_OLD=$(env LC_ALL=C zfs list -H -t snapshot -o name -s name | \
+ 		SNAPSHOTS_OLD=$(env LC_ALL=C zfs list -H -t snapshot -o name -s name -r $ii | \
 			grep $opt_prefix | \
 			awk '{ print substr( $0, length($0) - 14, length($0) ) " " $0}' | \
 			sort -r -k1,1 -k2,2 | \
@@ -421,7 +421,7 @@ then
 	  	|| { print_log error "zfs list $?: $SNAPSHOTS_OLD"; exit 137; }
 	fi
 else
-        SNAPSHOTS_OLD=$(env LC_ALL=C zfs list -H -t snapshot -S creation -o name) \
+        SNAPSHOTS_OLD=$(env LC_ALL=C zfs list -H -t snapshot -S creation -o name -r $ii) \
 	  || { print_log error "zfs list $?: $SNAPSHOTS_OLD"; exit 137; }
 fi
 
