@@ -1,5 +1,8 @@
 zfs-auto-snapshot:
 
+Behaviour has been changed to only accept one parent location instead of multiple. 
+Speeds up snapshot lookups. 
+
 An alternative implementation of the zfs-auto-snapshot service for Linux
 that is compatible with zfs-linux and zfs-fuse.
 
